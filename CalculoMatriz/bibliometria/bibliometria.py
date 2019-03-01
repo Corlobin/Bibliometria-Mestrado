@@ -36,8 +36,8 @@ for autores in linhas:
 #    print(' Nome : \t%s  \tParceiros: %s' %(nome, nomes[nome]))
 
 
-montaGrafo(grupo=nomes)
-criarGrafoAutoresNetworkX()
+#montaGrafo(grupo=nomes)
+criarGrafoAutoresNetworkX(grupo=nomes)
 
 
 

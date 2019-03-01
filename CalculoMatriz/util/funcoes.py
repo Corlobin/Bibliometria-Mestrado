@@ -1,6 +1,7 @@
-import pygraphviz
+#import pygraphviz
 import networkx as nx
 from PIL import Image
+from matplotlib import pyplot as plt
 '''
     Funcao usada para obter a media MICRO do TPR,
     uma vez que o pycm nao da essa informacao
@@ -117,12 +118,43 @@ def abreviarNome(nome):
     return nomeAbreviado
 
 
-def criarGrafoAutoresNetworkX() :
-    G = nx.Graph()
-    nx.draw(G)
+def criarGrafoAutoresNetworkX(grupo) :
+    G = nx.DiGraph()
+    dict = {}
+    for nome in grupo:
+        if ( nome not in dict):
+            dict[nome] = 1
+            G.add_node(node_for_adding=nome)
+        for submembro in grupo[nome]:
+            if (submembro not in dict):
+                G.add_node(node_for_adding=submembro)
+
+    for nome in grupo:
+        for submembro in grupo[nome]:
+            if nome != submembro:
+                G.add_edge(u_of_edge=nome, v_of_edge=submembro)
+
+
+    pos = nx.spring_layout(G)
+    labels = {}
+    for idx, node in enumerate(G.nodes()):
+        labels[node] = node
+
+    nx.draw_networkx_nodes(G, pos)
+    nx.draw_networkx_edges(G, pos)
+    nx.draw_networkx_labels(G, pos, labels, font_size=16)
+    plt.show()
+
+    dict_betweneess = nx.betweenness_centrality(G)
+    dict_closenesss = nx.closeness_centrality(G)
+    dict_degreecent = nx.degree_centrality(G)
+
+    for nome in dict_closenesss:
+        print('\tNome: \t%s \tBetweenness %f\tCloseness %f\tDegree %f' %(nome, dict_betweneess[nome], dict_closenesss[nome], dict_degreecent[nome]))
+
 
 def criarGrafoDeCoAutoriaSemPesos(grupo,indices,subindices):
-    print "\n[CRIANDO GRAFOS DE COLABORACOES SEM PESOS]"
+    print("\n[CRIANDO GRAFOS DE COLABORACOES SEM PESOS]")
     grafo = pygraphviz.AGraph(directed=False, overlap="False", id="grafo1", name="grafo1")
     grafo.node_attr['shape'] = 'rectangle'
     grafo.node_attr['fontsize'] = '12'
@@ -150,7 +182,7 @@ def criarGrafoDeCoAutoriaSemPesos(grupo,indices,subindices):
     return grafo
 
 def criarGrafoDeCoAutoriaComPesos(grupo,indices,subindices):
-    print "\n[CRIANDO GRAFOS DE COLABORACOES COM PESOS]"
+    print ("\n[CRIANDO GRAFOS DE COLABORACOES COM PESOS]")
 
     grafo = pygraphviz.AGraph(directed=False, overlap="False", id="grafo2", name="grafo2")
     grafo.node_attr['shape'] = 'rectangle'
