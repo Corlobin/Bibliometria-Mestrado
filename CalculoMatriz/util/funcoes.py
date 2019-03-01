@@ -1,4 +1,4 @@
-#import pygraphviz
+import pygraphviz
 import networkx as nx
 from PIL import Image
 from matplotlib import pyplot as plt
