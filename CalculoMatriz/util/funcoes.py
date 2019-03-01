@@ -1,7 +1,7 @@
 import pygraphviz
 import networkx as nx
 from PIL import Image
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 '''
     Funcao usada para obter a media MICRO do TPR,
     uma vez que o pycm nao da essa informacao
@@ -48,6 +48,41 @@ def montaGrafo(grupo):
     im = Image.open(diretorioDeSaida + '/grafoDeColaboracoesSemPesos.png')
     im.thumbnail((400, 400))
     im.save(diretorioDeSaida + '/grafoDeColaboracoesSemPesos-t.png')
+
+
+def montaGrafoInstituicoes(instituicoes):
+    diretorioDeSaida = '../saida'
+    grafoDeCoAutoriaSemPesos = criaGrafoInstituicoes(instituicoes)
+    grafoDeCoAutoriaSemPesos.draw(path=diretorioDeSaida + '/grafoInstituicoesSemPesos.png', format='png')
+    grafoDeCoAutoriaSemPesos.draw(path=diretorioDeSaida + '/grafoInstituicoesSemPesos.dot', format='dot')
+    grafoDeCoAutoriaSemPesosCMAPX = grafoDeCoAutoriaSemPesos.draw(format='cmapx')
+    im = Image.open(diretorioDeSaida + '/grafoDeColaboracoesSemPesos.png')
+    im.thumbnail((400, 400))
+    im.save(diretorioDeSaida + '/grafoDeColaboracoesSemPesos-t.png')
+
+def criaGrafoInstituicoes(instituicoes):
+    print("\n[CRIANDO GRAFOS DE INSTITUICOES SEM PESOS]")
+    grafo = pygraphviz.AGraph(directed=False, overlap="False", id="grafo1", name="grafo1")
+    grafo.node_attr['shape'] = 'rectangle'
+    grafo.node_attr['fontsize'] = '12'
+    grafo.node_attr['style'] = 'filled'
+
+    for nome in instituicoes:
+
+        raiz = nome[0]
+        restantes = nome[1:]
+
+        cor = '#0044CC'
+        grafo.add_node(n=raiz, height='0.3', fontcolor='#FFFFFF', color=cor)
+
+        for outras_instituicoes in restantes:
+            if outras_instituicoes != raiz:
+                grafo.add_node(n=outras_instituicoes, height='0.3', fontcolor='#FFFFFF', color=cor)
+                grafo.add_edge(u=raiz, v=outras_instituicoes, key=nome, height='0.3', fontcolor='#FFFFFF', color=cor)
+
+    grafo.layout('dot')  # circo dot neato
+    return grafo
+
 
 def calculaMediaMicroTPR(cm):
     total = 0;
